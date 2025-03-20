@@ -1,0 +1,38 @@
+[
+    {
+        "_id": "b101",
+        "title": "Cannot save a new car",
+        "description": "Problem occurs when clicking Save",
+        "severity": 3,
+        "createdAt": 1710800000000
+    },
+    {
+        "_id": "b103",
+        "title": "Login button unresponsive",
+        "description": "Clicking the login button does nothing on mobile devices",
+        "severity": 3,
+        "createdAt": 1710820000000,
+        "lastUpdated": 1742450245156
+    },
+    {
+        "_id": "b104",
+        "title": "Incorrect price calculation",
+        "description": "Cart shows wrong total after applying discount codes",
+        "severity": 4,
+        "createdAt": 1710830000000
+    },
+    {
+        "_id": "b105",
+        "title": "Images not loading",
+        "description": "Product images fail to load on the homepage",
+        "severity": 3,
+        "createdAt": 1710840000000
+    },
+    {
+        "_id": "b106",
+        "title": "Email notifications not sent",
+        "description": "Users are not receiving email notifications after sign-up",
+        "severity": 5,
+        "createdAt": 1710850000000
+    }
+]
