@@ -28,6 +28,19 @@ function query(filterBy = {}) {
             filteredBugs = filteredBugs.filter(bug => bug.severity >= +filterBy.minSeverity)
         }
 
+        // Filter by labels
+        if (filterBy.labels && filterBy.labels.length > 0) {
+            filteredBugs = filteredBugs.filter(bug => {
+                if (!bug.labels) return false
+
+                const isLabelIncludedInFilter = bug.labels.some(label => 
+                    filterBy.labels.includes(label)
+                )
+
+                return isLabelIncludedInFilter
+            })
+        }
+
         resolve(filteredBugs)
     })
 }
