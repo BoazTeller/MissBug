@@ -67,6 +67,30 @@ app.post('/api/bug', (req, res) => {
         })
 })
 
+// PUT: Update existing bug
+app.put('/api/bug/:bugId', (req, res) => {
+    const { _id, title, description, severity, labels } = req.body
+
+    if (!_id || !title || severity === undefined) {
+        return res.status(400).send('Missing required fields')
+    }
+
+    const bug = {
+        _id,
+        title,
+        description,
+        severity: +severity,
+        labels: labels || []
+    }
+
+    bugService.save(bug)
+        .then(savedBug => res.send(savedBug))
+        .catch(err => {
+            loggerService.error('Cannot save bug', err)
+            res.status(500).send('Cannot save bug')
+        })
+})
+
 // Get bug by ID
 app.get('/api/bug/:bugId', (req, res) => {
     const { bugId } = req.params
