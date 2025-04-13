@@ -11,6 +11,8 @@ const app = express()
 app.use(express.static('public'))
 // Parse cookies from incoming requests and make them accessible via req.cookies
 app.use(cookieParser())
+// Parse incoming JSON requests into req.body
+app.use(express.json())
 
 //* API Routes
 // GET: Fetch bugs list
