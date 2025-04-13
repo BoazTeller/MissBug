@@ -14,20 +14,26 @@ app.use(cookieParser())
 
 //* API Routes
 // Get all bugs
-app.get('/api/bug', (req, res) => {
-    // txt -> searches for title/description
-    const { txt, minSeverity } = req.query
+app.get('/api/bug/save', (req, res) => {
+    const { _id, title, description, severity, labels } = req.query
 
-    const filterBy = {
-        txt: txt?.trim() || '',
-        minSeverity: isNaN(minSeverity) ? null : +minSeverity
+    if (!title || !description || severity === undefined) {
+        return res.status(400).send('Missing required fields')
     }
 
-    bugService.query(filterBy)
-        .then(bugs => res.send(bugs))
+    const bugToSave = {
+        _id: _id || '',
+        title,
+        description,
+        severity: +severity,
+        labels: labels ? labels.split(',') : [] 
+    }
+
+    bugService.save(bugToSave)
+        .then(bug => res.send(bug))
         .catch(err => {
-            loggerService.error('Cannot get bugs', err)
-            res.status(500).send('Cannot get bugs')
+            loggerService.error('Cannot save bug', err)
+            res.status(500).send('Cannot save bug')
         })
 })
 
