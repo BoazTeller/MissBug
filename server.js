@@ -13,27 +13,21 @@ app.use(express.static('public'))
 app.use(cookieParser())
 
 //* API Routes
-// Get all bugs
-app.get('/api/bug/save', (req, res) => {
-    const { _id, title, description, severity, labels } = req.query
+// GET: Fetch bugs list
+app.get('/api/bug', (req, res) => {
+    const { txt, minSeverity, labels } = req.query
 
-    if (!title || !description || severity === undefined) {
-        return res.status(400).send('Missing required fields')
+    const filterBy = {
+        txt: txt?.trim() || '',
+        minSeverity: isNaN(minSeverity) ? null : +minSeverity,
+        labels: labels ? labels.split(',') : []
     }
 
-    const bugToSave = {
-        _id: _id || '',
-        title,
-        description,
-        severity: +severity,
-        labels: labels ? labels.split(',') : [] 
-    }
-
-    bugService.save(bugToSave)
-        .then(bug => res.send(bug))
+    bugService.query(filterBy)
+        .then(bugs => res.send(bugs))
         .catch(err => {
-            loggerService.error('Cannot save bug', err)
-            res.status(500).send('Cannot save bug')
+            loggerService.error('Cannot get bugs', err)
+            res.status(500).send('Cannot get bugs')
         })
 })
 
@@ -50,23 +44,23 @@ app.get('/api/bug/pdf', (req, res) => {
         })
 })
 
-// Create or update bug
-app.get('/api/bug/save', (req, res) => {
-    const { _id, title, description, severity } = req.query
-    
-    if (!title || !description || severity === undefined) {
+// POST: Create a new bug
+app.post('/api/bug', (req, res) => {
+    const { title, description, severity, labels } = req.body
+
+    if (!title || severity === undefined) {
         return res.status(400).send('Missing required fields')
     }
 
-    const bugToSave = {
-        _id: _id || '', // If no _id, send empty str
+    const bug = {
         title,
         description,
-        severity: +severity
+        severity: +severity || 1,
+        labels: labels || []
     }
-    
-    bugService.save(bugToSave)
-        .then(bug => res.send(bug))
+
+    bugService.save(bug)
+        .then(savedBug => res.send(savedBug))
         .catch(err => {
             loggerService.error('Cannot save bug', err)
             res.status(500).send('Cannot save bug')
