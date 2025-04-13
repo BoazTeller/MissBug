@@ -55,7 +55,9 @@ function getById(bugId) {
 }
 
 function save(bugToSave) {
-    if (bugToSave._id) {
+    const isExistingBug = bugToSave._id
+    
+    if (isExistingBug) {
         const bugIdx = bugs.findIndex(bug => bug._id === bugToSave._id)
         if (bugIdx === -1) {
             return Promise.reject(`Bug with ID ${bugToSave._id} not found`)
