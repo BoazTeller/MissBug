@@ -107,12 +107,14 @@ app.get('/api/bug/:bugId', (req, res) => {
         })
 })
 
-// Remove bug
-app.get('/api/bug/:bugId/remove', (req, res) => {
+// DELETE: Remove existing bug
+app.delete('/api/bug/:bugId', (req, res) => {
     const { bugId } = req.params
 
     bugService.remove(bugId)
-        .then(() => res.send(`${bugId} removed successfully`))
+        .then(() => {
+            res.send({ msg: 'Bug deleted successfully', bugId })
+        })
         .catch(err => {
             loggerService.error('Cannot remove bug', err)
             res.status(500).send('Cannot remove bug')
