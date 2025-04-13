@@ -56,7 +56,7 @@ function getById(bugId) {
 
 function save(bugToSave) {
     const isExistingBug = bugToSave._id
-    
+
     if (isExistingBug) {
         const bugIdx = bugs.findIndex(bug => bug._id === bugToSave._id)
         if (bugIdx === -1) {
@@ -66,11 +66,12 @@ function save(bugToSave) {
         bugs[bugIdx] = {
             ...bugs[bugIdx], 
             ...bugToSave, 
-            lastUpdated: Date.now()
+            updatedAt: Date.now()
         }
     } else {
         bugToSave._id = utilService.makeId()
         bugToSave.createdAt = Date.now()
+        bugToSave.updatedAt = Date.now()
         bugs.unshift(bugToSave)
     }
 
