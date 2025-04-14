@@ -169,6 +169,20 @@ app.post('api/bug/auth/login', (req, res) => {
         })
 })
 
+app.post('api/bug/auth/signup', (req, res) => {
+    const credentials = req.body
+
+    authService.signup(credentials)
+        .then(user => {
+            res.cookie('loggedinUser', JSON.stringify(user), { maxAge: 1000 * 60 * 60 * 24 })
+            res.send(user)
+        })
+        .catch(err => {
+            loggerService.error('Signup failed:', err)
+            res.status(400).send('Could not sign up user')
+        })
+})
+
 //* Start Server
 const PORT = 3030
 app.listen(PORT, (err) => {
