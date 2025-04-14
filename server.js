@@ -17,21 +17,33 @@ app.use(express.json())
 //* API Routes
 // GET: Fetch bugs list
 app.get('/api/bug', (req, res) => {
-    const { txt, minSeverity, labels } = req.query
+    const queryOptions = buildQueryOptions(req.query)
 
-    const filterBy = {
-        txt: txt?.trim() || '',
-        minSeverity: isNaN(minSeverity) ? null : +minSeverity,
-        labels: labels ? labels.split(',') : []
-    }
-
-    bugService.query(filterBy)
+    bugService.query(queryOptions)
         .then(bugs => res.send(bugs))
         .catch(err => {
             loggerService.error('Cannot get bugs', err)
             res.status(500).send('Cannot get bugs')
         })
 })
+
+function buildQueryOptions(queryParams = {}) {
+    return {
+        filterBy: {
+            txt: queryParams.txt?.trim() || '',
+            minSeverity: isNaN(+queryParams.minSeverity) ? 1 : +queryParams.minSeverity, 
+            labels: queryParams.labels || []
+        },
+        sortBy: {
+            sortField: queryParams.sortField || '',
+            sortDir: +queryParams.sortDir || 1
+        },
+        pagination: {
+            pageIdx: +queryParams.pageIdx || 0,
+            pageSize: +queryParams.pageSize || 3
+        }
+    }
+}
 
 // Create bugs PDF report
 app.get('/api/bug/pdf', (req, res) => {
