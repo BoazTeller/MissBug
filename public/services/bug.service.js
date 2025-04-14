@@ -7,7 +7,8 @@ export const bugService = {
     getById,
     save,
     remove,
-    getDefaultFilter
+    getDefaultFilter,
+    getDefaultSort
 }
 
 function query(queryOptions = {}) {
@@ -34,5 +35,18 @@ function remove(bugId) {
 }
 
 function getDefaultFilter() {
-    return { txt: '', minSeverity: 0 }
+    return {
+        txt: '',
+        minSeverity: '',
+        ...getDefaultSort(),
+        pageIdx: 0,
+        pageSize: 3
+    }
+}
+
+function getDefaultSort() {
+    return {
+        sortField: '',
+        sortDir: 1
+    }
 }
