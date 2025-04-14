@@ -32,10 +32,15 @@ export function BugFilter({ filterBy, onSetFilterBy }) {
         setFilterByToEdit(prevFilter => ({ ...prevFilter, [field]: value }))
     }
 
-    function onSubmitFilter(ev) {
-        ev.preventDefault()
-        onSetFilterBy(filterByToEdit)
+    function onClearFilter() {
+        setFilterByToEdit({ txt: '', minSeverity: '', sortField: '', sortDir: 1 })
     }
+
+    // Currently unused: kept for clarity if we switch from debounce to manual submit
+    // function onSubmitFilter(ev) {
+    //     ev.preventDefault()
+    //     onSetFilterBy(filterByToEdit)
+    // }
 
     const { txt, minSeverity } = filterByToEdit
     return (
@@ -47,7 +52,25 @@ export function BugFilter({ filterBy, onSetFilterBy }) {
 
                 <label htmlFor="minSeverity">Min Severity: </label>
                 <input value={minSeverity} onChange={handleChange} type="number" placeholder="By Min Severity" id="minSeverity" name="minSeverity" />
+
+                <label htmlFor="sortField">Sort by:</label>
+                <select name="sortField" id="sortField" value={sortField} onChange={handleChange}>
+                    <option value="">None</option>
+                    <option value="title">Title</option>
+                    <option value="severity">Severity</option>
+                    <option value="createdAt">Created At</option>
+                </select>
+
+                <label htmlFor="sortDir">Direction:</label>
+                <select name="sortDir" id="sortDir" value={sortDir} onChange={handleChange}>
+                    <option value="1">Ascending</option>
+                    <option value="-1">Descending</option>
+                </select>
+
+                <button type="button" onClick={onClearFilter}>Clear Filter</button>
             </form>
         </section>
     )
+
+    
 }
