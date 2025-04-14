@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 const BASE_URL = 'http://127.0.0.1:3030/api/bug'
 
 export const bugService = {
@@ -8,32 +10,26 @@ export const bugService = {
     getDefaultFilter
 }
 
-function query(filterBy = {}) {
-    return axios.get(BASE_URL, { params: filterBy })
+function query(queryOptions = {}) {
+    return axios.get(BASE_URL, { params: queryOptions })
         .then(res => res.data)
 }
 
 function getById(bugId) {
-    const url = `${BASE_URL}/${bugId}`
-
-    return axios.get(url)
+    return axios.get(`${BASE_URL}/${bugId}`)
         .then(res => res.data)
 }
 
 function save(bug) {
-    const url = `${BASE_URL}/save`
+    const method = bug._id ? 'put' : 'post'
+    const url = bug._id ? `${BASE_URL}/${bug._id}` : BASE_URL
 
-    return axios.get(url, { params: bug })
+    return axios[method](url, bug)
         .then(res => res.data)
-        .catch(err=>{
-            console.error('Failed to save bug:', err)
-        })
 }
 
 function remove(bugId) {
-    const url = `${BASE_URL}/${bugId}/remove`
-
-    return axios.get(url)
+    return axios.delete(`${BASE_URL}/${bugId}`)
         .then(res => res.data)
 }
 
