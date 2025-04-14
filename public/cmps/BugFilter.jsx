@@ -36,13 +36,17 @@ export function BugFilter({ filterBy, onSetFilterBy }) {
         setFilterByToEdit({ txt: '', minSeverity: '', sortField: '', sortDir: 1 })
     }
 
+    function onChangePage(diff) {
+        setFilterByToEdit(prev => ({ ...prev, pageIdx: prev.pageIdx + diff }))
+    }
+
     // Currently unused: kept for clarity if we switch from debounce to manual submit
     // function onSubmitFilter(ev) {
     //     ev.preventDefault()
     //     onSetFilterBy(filterByToEdit)
     // }
 
-    const { txt, minSeverity } = filterByToEdit
+    const { txt, minSeverity, sortField, sortDir, pageIdx } = filterByToEdit
     return (
         <section className="bug-filter">
             <h2>Filter</h2>
@@ -66,6 +70,12 @@ export function BugFilter({ filterBy, onSetFilterBy }) {
                     <option value="1">Ascending</option>
                     <option value="-1">Descending</option>
                 </select>
+
+                <div className="pagination-controls">
+                    <button type="button" onClick={() => onChangePage(-1)} disabled={pageIdx <= 0}>Prev</button>
+                    <span>Page {pageIdx + 1}</span>
+                    <button type="button" onClick={() => onChangePage(1)}>Next</button>
+                </div>
 
                 <button type="button" onClick={onClearFilter}>Clear Filter</button>
             </form>
