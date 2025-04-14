@@ -1,6 +1,7 @@
 import express from 'express'
 import cookieParser from 'cookie-parser'
 import { bugService } from './services/bug.service.js'
+import { authService } from './services/auth.service.js'
 import { loggerService } from './services/logger.service.js'
 import { pdfService } from './services/pdf.service.js'
 
@@ -153,6 +154,20 @@ function canViewBug(req, res, bugId) {
 
     return true 
 }
+
+app.post('api/bug/auth/login', (req, res) => {
+    const credentials = req.body
+
+    authService.login(credentials)
+        .then(user => {
+            res.cookie('loggedinUser', JSON.stringify(user), { maxAge: 1000 * 60 * 60 * 24 })
+            res.send('Login successful')
+        })
+        .catch(err => {
+            loggerService.error('Login failed:', err)
+            res.status(401).send('Invalid credentials')
+        })
+})
 
 //* Start Server
 const PORT = 3030
