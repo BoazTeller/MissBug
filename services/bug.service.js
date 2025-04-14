@@ -70,8 +70,8 @@ function remove(bugId) {
 
 function _saveBugsToFile() {
     return new Promise((resolve, reject) => {
-        const data = JSON.stringify(gBugs, null, 4)
-        fs.writeFile(BUGS_FILE, data, (err) => {
+        const bugsStr = JSON.stringify(gBugs, null, 4)
+        fs.writeFile(BUGS_FILE, bugsStr, (err) => {
             if (err) {
                 return reject(err)
             } else {
