@@ -1,10 +1,12 @@
 import { userService } from './user.service.js'
 import Cryptr from 'cryptr'
+import { utilService } from './util.service.js'
 
 const cryptr = new Cryptr('secret123')
 
 export const authService = {
-    login
+    login,
+    signup
 }
 
 function login({ username, password }) {
@@ -25,5 +27,23 @@ function login({ username, password }) {
             }
 
             return userToReturn
+        })
+}
+
+function signup({ username, password, fullname }) {
+    return userService.getByUsername(username)
+        .then(user => {
+            if (user) return Promise.reject('Username is already taken')
+        
+            const encryptedPass = cryptr.encrypt(password)
+            const newUser = {
+                _id: utilService.makeId(),
+                username,
+                fullname,
+                password: encryptedPass,
+                isAdmin: false
+            }
+
+            return userService.save(newUser)
         })
 }
