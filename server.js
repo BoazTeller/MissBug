@@ -158,9 +158,10 @@ function canViewBug(req, res, bugId) {
 app.post('api/bug/auth/login', (req, res) => {
     const credentials = req.body
 
-    authService.login(credentials)
+    authService.checkLogin(credentials)
         .then(user => {
-            res.cookie('loggedinUser', JSON.stringify(user), { maxAge: 1000 * 60 * 60 * 24 })
+            const loginToken = authService.getLoginToken(user)
+            res.cookie('loggedinUser', JSON.stringify(loginToken), { maxAge: 1000 * 60 * 60 * 24 })
             res.send('Login successful')
         })
         .catch(err => {
@@ -174,7 +175,8 @@ app.post('api/bug/auth/signup', (req, res) => {
 
     authService.signup(credentials)
         .then(user => {
-            res.cookie('loggedinUser', JSON.stringify(user), { maxAge: 1000 * 60 * 60 * 24 })
+            const loginToken = authService.getLoginToken(user)
+            res.cookie('loginToken', JSON.stringify(loginToken), { maxAge: 1000 * 60 * 60 * 24 })
             res.send(user)
         })
         .catch(err => {
