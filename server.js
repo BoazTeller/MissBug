@@ -4,6 +4,7 @@ import { bugService } from './services/bug.service.js'
 import { authService } from './services/auth.service.js'
 import { loggerService } from './services/logger.service.js'
 import { pdfService } from './services/pdf.service.js'
+import { requiredAuth } from './middlewares/requiredAuth.middleware.js'
 
 const app = express()
 
@@ -60,18 +61,21 @@ app.get('/api/bug/pdf', (req, res) => {
 })
 
 // POST: Create a new bug
-app.post('/api/bug', (req, res) => {
+app.post('/api/bug', requiredAuth, (req, res) => {
+    const { loggedinUser } = req
     const { title, description, severity, labels } = req.body
 
     if (!title || severity === undefined) {
         return res.status(400).send('Missing required fields')
     }
 
+    const { username, ...userWithoutUsername } = loggedinUser
     const bug = {
         title,
         description,
         severity: +severity || 1,
-        labels: labels || []
+        labels: labels || [],
+        creator: userWithoutUsername
     }
 
     bugService.save(bug)
@@ -83,19 +87,22 @@ app.post('/api/bug', (req, res) => {
 })
 
 // PUT: Update existing bug
-app.put('/api/bug/:bugId', (req, res) => {
+app.put('/api/bug/:bugId', requiredAuth, (req, res) => {
+    const { loggedinUser } = req
     const { _id, title, description, severity, labels } = req.body
 
     if (!_id || !title || severity === undefined) {
         return res.status(400).send('Missing required fields')
     }
 
+    const { username, ...userWithoutUsername } = loggedinUser
     const bug = {
         _id,
         title,
         description,
         severity: +severity,
-        labels: labels || []
+        labels: labels || [],
+        creator: userWithoutUsername
     }
 
     bugService.save(bug)
