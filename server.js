@@ -185,6 +185,11 @@ app.post('api/bug/auth/signup', (req, res) => {
         })
 })
 
+app.post('/api/bug/auth/logout', (req, res) => {
+    res.clearCookie('loginToken')
+    res.send('Logged out successfully')
+})
+
 //* Start Server
 const PORT = 3030
 app.listen(PORT, (err) => {
