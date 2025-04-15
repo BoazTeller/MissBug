@@ -1,21 +1,22 @@
 import { userService } from './user.service.js'
-import Cryptr from 'cryptr'
 import { utilService } from './util.service.js'
+import Cryptr from 'cryptr'
 
 const cryptr = new Cryptr('secret123')
 
 export const authService = {
-    login,
-    signup
+    checkLogin,
+    signup,
+    getLoginToken,
+    validateToken
 }
 
-function login({ username, password }) {
-    return userService.getByUsername(user)
+function checkLogin({ username, password }) {
+    return userService.getByUsername(username)
         .then(user => {
             if (!user) return Promise.reject('Invalid username')
             
             const decryptedPass = cryptr.decrypt(user.password)
-
             if (decryptedPass !== password) {
                 return Promise.reject('Invalid password')
             }
@@ -46,4 +47,18 @@ function signup({ username, password, fullname }) {
 
             return userService.save(newUser)
         })
+}
+
+function getLoginToken(user) {
+    const userStr = JSON.stringify(user)
+    return cryptr.encrypt(userStr)
+}
+
+function validateToken(token) {
+    if (!token) return null
+
+    const decryptedStr = cryptr.decrypt(token)
+    const user = JSON.parse(decryptedStr)
+
+    return userStr
 }
