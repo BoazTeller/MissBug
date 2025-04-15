@@ -4,7 +4,7 @@ import { bugService } from './services/bug.service.js'
 import { authService } from './services/auth.service.js'
 import { loggerService } from './services/logger.service.js'
 import { pdfService } from './services/pdf.service.js'
-import { requiredAuth } from './middlewares/requiredAuth.middleware.js'
+import { requiredAuth } from './middlewares/requiredAuth.middleWare.js'
 
 const app = express()
 
@@ -130,10 +130,11 @@ app.get('/api/bug/:bugId', (req, res) => {
 })
 
 // DELETE: Remove existing bug
-app.delete('/api/bug/:bugId', (req, res) => {
+app.delete('/api/bug/:bugId', requiredAuth, (req, res) => {
+    const { loggedinUser } = req
     const { bugId } = req.params
 
-    bugService.remove(bugId)
+    bugService.remove(bugId, loggedinUser)
         .then(() => {
             res.send({ msg: 'Bug deleted successfully', bugId })
         })
@@ -149,7 +150,7 @@ function canViewBug(req, res, bugId) {
 
     if (visitedBugs.length >= 3) {
         loggerService.info(`User hit bug view limit: ${visitedBugs}`)
-        return false 
+        return false
     }
 
     // User can revisit the same bug without restrictions

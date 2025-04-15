@@ -58,14 +58,24 @@ function save(bugToSave) {
         .then(() => bugToSave)
 }
 
-function remove(bugId) {
+function remove(bugId, loggedinUser) {
     const bugIdx = gBugs.findIndex(bug => bug._id === bugId)
     if (bugIdx === -1) {
         return Promise.reject(`Bug with ID ${bugId} not found`)
     }
 
+    const bug = gBugs[bugIdx]
+    if (!_isAuthorized(bug, loggedinUser)) {
+        return Promise.reject('Not authorized to delete this bug')
+    }
+
     gBugs.splice(bugIdx, 1)
     return _saveBugsToFile()
+}
+
+function _isAuthorized(bug, loggedinUser) {
+    const isAuthorized = bug.creator._id === loggedinUser._id || loggedinUser.isAdmin
+    return isAuthorized
 }
 
 function _saveBugsToFile() {
